@@ -1,5 +1,5 @@
 # flask_deploy_testing
-Testing for scikit-leaern model deployment.
+Testing for model deployment.
 
 ## How to test
 1. Execute model.py. (train simple sequential model and save model)
