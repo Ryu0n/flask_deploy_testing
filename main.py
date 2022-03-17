@@ -1,7 +1,9 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import tensorflow.keras as keras
 
-from flask import Flask, request
+from PIL import Image
+from flask import Flask, request, render_template
 from src.mnist import MNIST
 from src.utils.util_path import PathUtils
 
@@ -18,6 +20,37 @@ def index():
     {'index': 1}
     """
     return message
+
+
+@app.route('/predict_real_get')
+def predict_real_get():
+    parameters = request.args.to_dict()
+    index = int(parameters['index'])
+    img_name = load_image(index)
+    prediction_message = predict(index)
+    return render_template('prediction_get.html', img=img_name, pred=prediction_message)
+
+
+@app.route('/show_static')
+def show_static_image():
+    return render_template('image_static.html')
+
+
+def load_image(index):
+    _, _, x_test, y_test = MNIST.instance().load_with_preprocess()
+    np_img = x_test[index] # 28 x 28 array
+    img_name = f'mnist_{index}.jpg'
+    plt.imshow(np_img)
+    plt.savefig(PathUtils.static_path() + img_name)
+    return img_name
+
+
+@app.route('/show_dynamic')
+def show_dynamic_image():
+    parameters = request.args.to_dict()
+    index = int(parameters['index'])
+    img_name = load_image(index)
+    return render_template('image_dynamic.html', img=img_name)
 
 
 def predict(index):
@@ -37,8 +70,8 @@ def make_prediction_get():
     :return:
     """
     parameters = request.args.to_dict()
-    index = parameters['index']
-    return predict(int(index))
+    index = int(parameters['index'])
+    return predict(index)
 
 
 @app.route('/predict', methods=['POST'])
@@ -53,8 +86,8 @@ def make_prediction():
     """
     if request.method == 'POST':
         params = request.get_json()
-        index = params['index']
-        return predict(int(index))
+        index = int(params['index'])
+        return predict(index)
 
 
 if __name__ == '__main__':

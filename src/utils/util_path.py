@@ -13,3 +13,11 @@ class PathUtils:
     @staticmethod
     def model_path():
         return PathUtils.project_path() + '/models/'
+
+    @staticmethod
+    def static_path():
+        return PathUtils.project_path() + '/static/'
+
+    @staticmethod
+    def template_path():
+        return PathUtils.project_path() + '/templates/'
